@@ -12,8 +12,8 @@ import librosa
 import scipy
 import librosa
 
-def apply_mcadams(waveform, sample_rate, winLengthinms=20, shiftLengthinms=5, lp_order=32, mcadams=0.70):
-    """
+def apply_mcadams(waveform, sample_rate, winLengthinms=20, shiftLengthinms=10, lp_order=32, mcadams=0.70):
+    """ 
     Apply McAdams transformation on a single audio waveform.
 
     Parameters:
@@ -118,8 +118,15 @@ def anonymize(input_audio_path): # <!> DO NOT ADD ANY OTHER ARGUMENTS <!>
     # print(type(data))
     # Apply your anonymization algorithm
     anonymized_audio, anonymized_sample_rate = apply_mcadams(data, sample_rate)
+    y_shifted = librosa.effects.pitch_shift(
+        anonymized_audio, 
+        sr=sample_rate, 
+        n_steps=2, 
+        bins_per_octave=12  # Chromatic scale
+    )
     # Output:
-    audio = anonymized_audio
+    audio = y_shifted
+    # audio = anonymized_audio
     sr = anonymized_sample_rate
     
     return audio, sr
