@@ -10,10 +10,9 @@
 import numpy as np
 import librosa
 import scipy
-import librosa
 
-def apply_mcadams(waveform, sample_rate, winLengthinms=20, shiftLengthinms=10, lp_order=32, mcadams=0.70):
-    """ 
+def apply_mcadams(waveform, sample_rate, winLengthinms=20, shiftLengthinms=5, lp_order=30, mcadams=0.7):
+    """
     Apply McAdams transformation on a single audio waveform.
 
     Parameters:
@@ -107,26 +106,18 @@ def anonymize(input_audio_path): # <!> DO NOT ADD ANY OTHER ARGUMENTS <!>
     Returns
     -------
     audio : numpy.ndarray, shape (samples,), dtype=np.float32
-        The anonymized audio signal as a 1D NumPy array of type `np.float32`, 
-        which ensures compatibility with `soundfile.write()`.
+        The anonymized audio signal as a 1D NumPy array of type np.float32, 
+        which ensures compatibility with soundfile.write().
     sr : int
         The sample rate of the processed audio.
     """
 
     # Read the source audio file
     data, sample_rate = librosa.load(input_audio_path, sr=None)
-    # print(type(data))
     # Apply your anonymization algorithm
     anonymized_audio, anonymized_sample_rate = apply_mcadams(data, sample_rate)
-    y_shifted = librosa.effects.pitch_shift(
-        anonymized_audio, 
-        sr=sample_rate, 
-        n_steps=2, 
-        bins_per_octave=12  # Chromatic scale
-    )
     # Output:
-    audio = y_shifted
-    # audio = anonymized_audio
+    audio = anonymized_audio
     sr = anonymized_sample_rate
     
     return audio, sr
